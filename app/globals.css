@@ -1,0 +1,34 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  :root {
+    --brand-600: #1F4E79;
+  }
+  html, body { height: 100%; }
+  body {
+    @apply bg-slate-50 text-slate-900 antialiased;
+    font-family: Inter, system-ui, -apple-system, sans-serif;
+  }
+}
+
+@layer components {
+  .card {
+    @apply bg-white border border-slate-200 rounded-lg shadow-sm;
+  }
+  .btn-primary {
+    @apply inline-flex items-center gap-2 bg-brand-600 hover:bg-brand-700 text-white font-medium px-4 py-2 rounded-md text-sm transition-colors disabled:opacity-50 disabled:cursor-not-allowed;
+  }
+  .btn-secondary {
+    @apply inline-flex items-center gap-2 bg-white hover:bg-slate-50 text-slate-700 border border-slate-300 font-medium px-4 py-2 rounded-md text-sm transition-colors;
+  }
+  .badge {
+    @apply inline-flex items-center px-2 py-0.5 rounded text-xs font-medium;
+  }
+  .badge-critical { @apply bg-red-100 text-red-800; }
+  .badge-major    { @apply bg-amber-100 text-amber-800; }
+  .badge-minor    { @apply bg-blue-100 text-blue-800; }
+  .badge-approved { @apply bg-emerald-100 text-emerald-800; }
+  .badge-pending  { @apply bg-slate-100 text-slate-700; }
+}
