@@ -1,5 +1,5 @@
 import Anthropic from "@anthropic-ai/sdk";
-import { prisma } from "@/lib/db/prisma";
+import { AICallLog } from "@/lib/store";
 
 const apiKey = process.env.ANTHROPIC_API_KEY;
 export const anthropic = apiKey ? new Anthropic({ apiKey }) : null;
@@ -11,7 +11,6 @@ export interface ClaudeCallOptions {
   system?: string;
   model?: string;
   maxTokens?: number;
-  userId?: string;
   jsonMode?: boolean;
 }
 
@@ -24,18 +23,12 @@ export interface ClaudeCallResult<T = string> {
   model: string;
 }
 
-/**
- * Central wrapper for every Claude call.
- * - Logs input, output, tokens, and latency to AICall table
- * - Handles JSON parsing when jsonMode = true
- * - Falls back gracefully with a clear error if API key is missing
- */
 export async function callClaude<T = unknown>(
   opts: ClaudeCallOptions
 ): Promise<ClaudeCallResult<T>> {
   if (!anthropic) {
     throw new Error(
-      "ANTHROPIC_API_KEY is not configured. Set it in your .env or Render environment variables."
+      "ANTHROPIC_API_KEY is not configured. Set it in your Render environment variables."
     );
   }
 
@@ -57,26 +50,16 @@ export async function callClaude<T = unknown>(
   const text = textBlocks.join("\n").trim();
 
   let parsed: T | undefined;
-  if (opts.jsonMode) {
-    parsed = safeParseJSON<T>(text);
-  }
+  if (opts.jsonMode) parsed = safeParseJSON<T>(text);
 
-  // Fire-and-forget audit log
-  prisma.aICall
-    .create({
-      data: {
-        userId: opts.userId,
-        useCase: opts.useCase,
-        promptId: opts.promptId,
-        model,
-        inputTokens: message.usage.input_tokens,
-        outputTokens: message.usage.output_tokens,
-        latencyMs,
-        request: { prompt: opts.prompt, system: opts.system },
-        response: { text },
-      },
-    })
-    .catch((err: unknown) => console.error("[claude] audit log failed:", err));
+  AICallLog.add({
+    useCase: opts.useCase,
+    promptId: opts.promptId,
+    model,
+    inputTokens: message.usage.input_tokens,
+    outputTokens: message.usage.output_tokens,
+    latencyMs,
+  });
 
   return {
     text,
@@ -89,12 +72,10 @@ export async function callClaude<T = unknown>(
 }
 
 function safeParseJSON<T>(text: string): T | undefined {
-  // Strip ```json fences if present
   const cleaned = text.replace(/```json\s*|```/g, "").trim();
   try {
     return JSON.parse(cleaned) as T;
   } catch {
-    // Try to find first JSON array or object in the text
     const match = cleaned.match(/(\[[\s\S]*\]|\{[\s\S]*\})/);
     if (match) {
       try {

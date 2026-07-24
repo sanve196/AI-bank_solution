@@ -1,6 +1,6 @@
 import { NextRequest } from "next/server";
 import { z } from "zod";
-import { prisma } from "@/lib/db/prisma";
+import { Deviations } from "@/lib/store";
 import { ok, fail } from "@/lib/utils/api";
 
 const schema = z.object({
@@ -12,12 +12,13 @@ export async function POST(req: NextRequest, { params }: { params: { id: string 
   try {
     const parsed = schema.safeParse(await req.json());
     if (!parsed.success) return fail("VALIDATION_ERROR", parsed.error.message);
-    const updated = await prisma.deviation.update({
-      where: { id: params.id },
-      data: { status: parsed.data.status, reviewerNote: parsed.data.reviewerNote ?? null },
+    const updated = Deviations.update(params.id, {
+      status: parsed.data.status,
+      reviewerNote: parsed.data.reviewerNote ?? null,
     });
+    if (!updated) return fail("NOT_FOUND", "Deviation not found", 404);
     return ok(updated);
   } catch (e: any) {
-    return fail("DB_ERROR", e.message ?? "Database error", 500);
+    return fail("ERROR", e.message ?? "Failed", 500);
   }
 }
