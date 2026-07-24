@@ -52,6 +52,7 @@ export async function callClaude<T = unknown>(
   let parsed: T | undefined;
   if (opts.jsonMode) parsed = safeParseJSON<T>(text);
 
+  // Non-blocking audit log
   AICallLog.add({
     useCase: opts.useCase,
     promptId: opts.promptId,
@@ -59,7 +60,9 @@ export async function callClaude<T = unknown>(
     inputTokens: message.usage.input_tokens,
     outputTokens: message.usage.output_tokens,
     latencyMs,
-  });
+    request: { prompt: opts.prompt.slice(0, 4000), system: opts.system?.slice(0, 1000) },
+    response: { text: text.slice(0, 4000) },
+  }).catch(() => {});
 
   return {
     text,
@@ -73,17 +76,8 @@ export async function callClaude<T = unknown>(
 
 function safeParseJSON<T>(text: string): T | undefined {
   const cleaned = text.replace(/```json\s*|```/g, "").trim();
-  try {
-    return JSON.parse(cleaned) as T;
-  } catch {
-    const match = cleaned.match(/(\[[\s\S]*\]|\{[\s\S]*\})/);
-    if (match) {
-      try {
-        return JSON.parse(match[1]) as T;
-      } catch {
-        return undefined;
-      }
-    }
-    return undefined;
-  }
+  try { return JSON.parse(cleaned) as T; } catch {}
+  const match = cleaned.match(/(\[[\s\S]*\]|\{[\s\S]*\})/);
+  if (match) { try { return JSON.parse(match[1]) as T; } catch {} }
+  return undefined;
 }

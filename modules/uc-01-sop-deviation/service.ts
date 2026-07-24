@@ -26,14 +26,14 @@ export interface DeviationDraft {
 }
 
 export async function analyzeApplication(applicationId: string) {
-  const app = Applications.get(applicationId);
+  const app = await Applications.get(applicationId);
   if (!app) throw new Error("Application not found");
   if (!app.extractedData) throw new Error("Application has no extracted data to analyze");
 
   const rules = SAMPLE_SOP_RULES[app.productType as keyof typeof SAMPLE_SOP_RULES]
     ?? SAMPLE_SOP_RULES.TERM_LOAN;
 
-  Applications.update(applicationId, { status: "ANALYZING" });
+  await Applications.update(applicationId, { status: "ANALYZING" });
 
   const prompt = buildUC01Prompt({
     productType: app.productType,
@@ -53,10 +53,9 @@ export async function analyzeApplication(applicationId: string) {
 
   const deviations = Array.isArray(result.parsed) ? result.parsed : [];
 
-  // Replace existing deviations for this application
-  Deviations.deleteByApplication(applicationId);
+  await Deviations.deleteByApplication(applicationId);
   for (const d of deviations) {
-    Deviations.create({
+    await Deviations.create({
       applicationId,
       severity: d.severity,
       sopClauseId: d.sopClauseId,
@@ -66,7 +65,7 @@ export async function analyzeApplication(applicationId: string) {
     });
   }
 
-  Applications.update(applicationId, { status: "REVIEW" });
+  await Applications.update(applicationId, { status: "REVIEW" });
 
   return {
     deviationCount: deviations.length,

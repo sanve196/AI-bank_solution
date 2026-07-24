@@ -10,24 +10,25 @@ const createSchema = z.object({
 });
 
 export async function GET() {
-  const apps = Applications.list().map((a) => ({
-    ...a,
-    _count: { deviations: Applications.countDeviations(a.id) },
-  }));
-  return ok(apps);
+  try {
+    const apps = await Applications.list();
+    return ok(apps);
+  } catch (e: any) {
+    return fail("DB_ERROR", e.message ?? "Database error", 500);
+  }
 }
 
 export async function POST(req: NextRequest) {
   try {
     const parsed = createSchema.safeParse(await req.json());
     if (!parsed.success) return fail("VALIDATION_ERROR", parsed.error.message);
-    const app = Applications.create({
+    const app = await Applications.create({
       applicantName: parsed.data.applicantName,
       productType: parsed.data.productType,
       extractedData: parsed.data.extractedData ?? {},
     });
     return ok(app);
   } catch (e: any) {
-    return fail("ERROR", e.message ?? "Failed", 500);
+    return fail("DB_ERROR", e.message ?? "Database error", 500);
   }
 }
