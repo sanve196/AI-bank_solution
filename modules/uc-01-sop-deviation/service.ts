@@ -35,42 +35,48 @@ export async function analyzeApplication(applicationId: string) {
 
   await Applications.update(applicationId, { status: "ANALYZING" });
 
-  const prompt = buildUC01Prompt({
-    productType: app.productType,
-    applicantName: app.applicantName,
-    applicantData: app.extractedData as Record<string, unknown>,
-    sopRules: rules,
-  });
-
-  const result = await callClaude<DeviationDraft[]>({
-    useCase: "UC-01",
-    promptId: UC01_DEVIATION_PROMPT_ID,
-    prompt,
-    system: UC01_SYSTEM,
-    jsonMode: true,
-    maxTokens: 2048,
-  });
-
-  const deviations = Array.isArray(result.parsed) ? result.parsed : [];
-
-  await Deviations.deleteByApplication(applicationId);
-  for (const d of deviations) {
-    await Deviations.create({
-      applicationId,
-      severity: d.severity,
-      sopClauseId: d.sopClauseId,
-      expectedValue: d.expectedValue,
-      actualValue: d.actualValue,
-      justification: d.justification,
+  try {
+    const prompt = buildUC01Prompt({
+      productType: app.productType,
+      applicantName: app.applicantName,
+      applicantData: app.extractedData as Record<string, unknown>,
+      sopRules: rules,
     });
+
+    const result = await callClaude<DeviationDraft[]>({
+      useCase: "UC-01",
+      promptId: UC01_DEVIATION_PROMPT_ID,
+      prompt,
+      system: UC01_SYSTEM,
+      jsonMode: true,
+      maxTokens: 2048,
+    });
+
+    const deviations = Array.isArray(result.parsed) ? result.parsed : [];
+
+    await Deviations.deleteByApplication(applicationId);
+    for (const d of deviations) {
+      await Deviations.create({
+        applicationId,
+        severity: d.severity,
+        sopClauseId: d.sopClauseId,
+        expectedValue: d.expectedValue,
+        actualValue: d.actualValue,
+        justification: d.justification,
+      });
+    }
+
+    await Applications.update(applicationId, { status: "REVIEW" });
+
+    return {
+      deviationCount: deviations.length,
+      latencyMs: result.latencyMs,
+      inputTokens: result.inputTokens,
+      outputTokens: result.outputTokens,
+    };
+  } catch (err) {
+    // Reset status so the app doesn't get stuck in ANALYZING
+    await Applications.update(applicationId, { status: "DRAFT" }).catch(() => {});
+    throw err;
   }
-
-  await Applications.update(applicationId, { status: "REVIEW" });
-
-  return {
-    deviationCount: deviations.length,
-    latencyMs: result.latencyMs,
-    inputTokens: result.inputTokens,
-    outputTokens: result.outputTokens,
-  };
 }
