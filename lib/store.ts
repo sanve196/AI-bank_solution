@@ -17,7 +17,7 @@ export const Applications = {
         applicantName: data.applicantName,
         productType: data.productType,
         status: data.status ?? "DRAFT",
-        extractedData: data.extractedData ?? {},
+        extractedData: (data.extractedData ?? {}) as any,
       },
     });
   },
@@ -84,8 +84,8 @@ export const AICallLog = {
           inputTokens: record.inputTokens,
           outputTokens: record.outputTokens,
           latencyMs: record.latencyMs,
-          request: record.request ?? {},
-          response: record.response ?? {},
+          request: (record.request ?? {}) as any,
+          response: (record.response ?? {}) as any,
         },
       });
     } catch (e) {
