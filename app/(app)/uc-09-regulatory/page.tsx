@@ -1,4 +1,4 @@
-import PlannedModule from "@/components/shell/planned-module";
+import PlannedModule from "../../../components/shell/planned-module";
 export default function Page() {
   return (
     <PlannedModule

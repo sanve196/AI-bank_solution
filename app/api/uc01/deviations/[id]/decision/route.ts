@@ -1,7 +1,7 @@
 import { NextRequest } from "next/server";
 import { z } from "zod";
-import { Deviations } from "@/lib/store";
-import { ok, fail } from "@/lib/utils/api";
+import { Deviations } from "../../../../../../lib/store";
+import { ok, fail } from "../../../../../../lib/utils/api";
 
 const schema = z.object({
   status: z.enum(["APPROVED_OVERRIDE", "REJECTED"]),

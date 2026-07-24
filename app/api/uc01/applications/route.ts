@@ -1,7 +1,7 @@
 import { NextRequest } from "next/server";
 import { z } from "zod";
-import { Applications } from "@/lib/store";
-import { ok, fail } from "@/lib/utils/api";
+import { Applications } from "../../../../lib/store";
+import { ok, fail } from "../../../../lib/utils/api";
 
 const createSchema = z.object({
   applicantName: z.string().min(1),

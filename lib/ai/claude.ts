@@ -1,5 +1,5 @@
 import Anthropic from "@anthropic-ai/sdk";
-import { AICallLog } from "@/lib/store";
+import { AICallLog } from "../store";
 
 const apiKey = process.env.ANTHROPIC_API_KEY;
 export const anthropic = apiKey ? new Anthropic({ apiKey }) : null;

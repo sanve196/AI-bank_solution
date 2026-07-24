@@ -1,5 +1,5 @@
-import Sidebar from "@/components/shell/sidebar";
-import Topbar from "@/components/shell/topbar";
+import Sidebar from "../../components/shell/sidebar";
+import Topbar from "../../components/shell/topbar";
 
 export default function AppLayout({ children }: { children: React.ReactNode }) {
   return (

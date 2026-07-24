@@ -1,5 +1,5 @@
-import { Applications, Deviations } from "@/lib/store";
-import { callClaude } from "@/lib/ai/claude";
+import { Applications, Deviations } from "../../lib/store";
+import { callClaude } from "../../lib/ai/claude";
 import { buildUC01Prompt, UC01_SYSTEM, UC01_DEVIATION_PROMPT_ID } from "./prompts";
 
 export const SAMPLE_SOP_RULES = {

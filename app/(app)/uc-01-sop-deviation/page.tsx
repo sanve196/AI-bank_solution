@@ -1,6 +1,6 @@
 "use client";
 import { useEffect, useState } from "react";
-import PageHeader from "@/components/shell/page-header";
+import PageHeader from "../../../components/shell/page-header";
 import { Plus, RefreshCw, FileSearch, AlertTriangle, CheckCircle2, Clock } from "lucide-react";
 import NewApplicationDialog from "./new-application-dialog";
 import ApplicationDetail from "./application-detail";
