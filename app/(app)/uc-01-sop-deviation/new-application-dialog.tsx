@@ -2,10 +2,10 @@
 import { useState } from "react";
 import { X, Sparkles } from "lucide-react";
 
-// Sample scenarios that trigger different deviation patterns
 const SAMPLES = {
   clean: {
-    label: "Clean applicant (few / no deviations)",
+    label: "Clean applicant",
+    hint: "few or no deviations",
     data: {
       applicantName: "Sunshine Textiles Pvt Ltd",
       productType: "TERM_LOAN" as const,
@@ -20,7 +20,8 @@ const SAMPLES = {
     },
   },
   risky: {
-    label: "Risky applicant (multiple deviations)",
+    label: "Risky applicant",
+    hint: "multiple deviations",
     data: {
       applicantName: "Everstar Trading Co",
       productType: "TERM_LOAN" as const,
@@ -35,7 +36,8 @@ const SAMPLES = {
     },
   },
   mixed: {
-    label: "Mixed working-capital case",
+    label: "Working capital",
+    hint: "mixed case",
     data: {
       applicantName: "Ganga Distributors LLP",
       productType: "WORKING_CAPITAL" as const,
@@ -71,8 +73,7 @@ export default function NewApplicationDialog({
       let data: any;
       try { data = JSON.parse(dataJson); } catch { throw new Error("Extracted data must be valid JSON"); }
       const r = await fetch("/api/uc01/applications", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
+        method: "POST", headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ applicantName, productType, extractedData: data }),
       });
       const j = await r.json();
@@ -83,54 +84,68 @@ export default function NewApplicationDialog({
   }
 
   return (
-    <div className="fixed inset-0 bg-slate-900/40 z-50 flex items-center justify-center p-4">
-      <div className="card w-full max-w-2xl max-h-[90vh] overflow-y-auto">
-        <div className="flex items-center justify-between px-5 py-3 border-b border-slate-200">
-          <h3 className="font-semibold">New Application</h3>
-          <button onClick={onClose} className="text-slate-400 hover:text-slate-700"><X className="w-5 h-5" /></button>
-        </div>
-        <div className="p-5 space-y-4">
+    <div className="fixed inset-0 z-50 flex items-center justify-center p-4"
+         style={{ background: 'rgba(15, 23, 42, 0.35)', backdropFilter: 'blur(8px)' }}>
+      <div className="glass-strong w-full max-w-2xl max-h-[90vh] overflow-y-auto">
+        <div className="flex items-center justify-between px-6 py-4" style={{ borderBottom: '1px solid rgba(255,255,255,0.5)' }}>
           <div>
-            <label className="text-xs font-medium text-slate-600 uppercase tracking-wide">Quick samples</label>
-            <div className="flex flex-wrap gap-2 mt-1.5">
+            <div className="label mb-1">New application</div>
+            <h3 className="display text-xl text-ink-900">Create case</h3>
+          </div>
+          <button onClick={onClose} className="p-1.5 rounded-lg text-ink-500 hover:text-ink-900 hover:bg-white/60"><X className="w-4 h-4" strokeWidth={1.75}/></button>
+        </div>
+        <div className="p-6 space-y-5">
+          <div>
+            <div className="label mb-2">Quick samples</div>
+            <div className="grid grid-cols-3 gap-2">
               {(Object.keys(SAMPLES) as Array<keyof typeof SAMPLES>).map((k) => (
                 <button key={k} type="button" onClick={() => loadSample(k)}
-                        className="text-xs px-3 py-1.5 rounded-md bg-brand-50 text-brand-700 hover:bg-brand-100 flex items-center gap-1">
-                  <Sparkles className="w-3 h-3" /> {SAMPLES[k].label}
+                        className="text-left px-3 py-2.5 rounded-xl transition-all hover:-translate-y-0.5"
+                        style={{
+                          background: 'rgba(79, 70, 229, 0.05)',
+                          border: '1px solid rgba(79, 70, 229, 0.12)',
+                        }}>
+                  <div className="flex items-center gap-1 text-[12px] font-medium text-ink-900 tracking-tight">
+                    <Sparkles className="w-3 h-3 text-accent-from" strokeWidth={1.75}/> {SAMPLES[k].label}
+                  </div>
+                  <div className="text-[10px] font-mono uppercase tracking-wider text-ink-500 mt-1">{SAMPLES[k].hint}</div>
                 </button>
               ))}
             </div>
           </div>
           <div>
-            <label className="text-xs font-medium text-slate-600 uppercase tracking-wide">Applicant name</label>
-            <input value={applicantName} onChange={(e) => setApplicantName(e.target.value)}
-                   className="w-full mt-1 px-3 py-2 border border-slate-300 rounded-md text-sm focus:outline-none focus:ring-2 focus:ring-brand-500" />
+            <div className="label mb-1.5">Applicant name</div>
+            <input value={applicantName} onChange={(e) => setApplicantName(e.target.value)} className="input" placeholder="e.g. Sunshine Textiles Pvt Ltd"/>
           </div>
           <div>
-            <label className="text-xs font-medium text-slate-600 uppercase tracking-wide">Product type</label>
-            <select value={productType} onChange={(e) => setProductType(e.target.value as any)}
-                    className="w-full mt-1 px-3 py-2 border border-slate-300 rounded-md text-sm bg-white">
-              <option value="TERM_LOAN">Term Loan</option>
-              <option value="WORKING_CAPITAL">Working Capital</option>
+            <div className="label mb-1.5">Product type</div>
+            <select value={productType} onChange={(e) => setProductType(e.target.value as any)} className="input">
+              <option value="TERM_LOAN">Term loan</option>
+              <option value="WORKING_CAPITAL">Working capital</option>
             </select>
           </div>
           <div>
-            <label className="text-xs font-medium text-slate-600 uppercase tracking-wide">
-              Extracted applicant data (JSON)
-            </label>
-            <p className="text-xs text-slate-500 mt-1">
-              In production this comes from OCR + Claude extraction of uploaded financial statements. For now, paste JSON or use a sample above.
+            <div className="flex items-baseline justify-between mb-1.5">
+              <div className="label">Extracted applicant data</div>
+              <div className="text-[10px] font-mono text-ink-300">JSON</div>
+            </div>
+            <p className="text-[11px] text-ink-500 mb-2 leading-relaxed">
+              In production this comes from OCR + Claude extraction of uploaded financial statements.
             </p>
-            <textarea value={dataJson} onChange={(e) => setDataJson(e.target.value)}
-                      rows={10}
-                      className="w-full mt-1.5 px-3 py-2 border border-slate-300 rounded-md text-xs font-mono focus:outline-none focus:ring-2 focus:ring-brand-500" />
+            <textarea value={dataJson} onChange={(e) => setDataJson(e.target.value)} rows={9}
+                      className="input font-mono text-[11px] leading-relaxed"/>
           </div>
-          {error && <div className="text-sm text-red-700 bg-red-50 border border-red-200 rounded p-2">{error}</div>}
+          {error && (
+            <div className="text-[13px] px-3 py-2 rounded-xl"
+                 style={{ background: 'rgba(239, 68, 68, 0.08)', border: '1px solid rgba(239, 68, 68, 0.2)', color: '#B91C1C' }}>
+              {error}
+            </div>
+          )}
         </div>
-        <div className="px-5 py-3 border-t border-slate-200 flex justify-end gap-2 bg-slate-50">
+        <div className="px-6 py-4 flex justify-end gap-2" style={{ borderTop: '1px solid rgba(255,255,255,0.5)' }}>
           <button onClick={onClose} className="btn-secondary">Cancel</button>
           <button onClick={submit} disabled={!applicantName || submitting} className="btn-primary">
-            {submitting ? "Creating…" : "Create Application"}
+            {submitting ? "Creating…" : "Create application"}
           </button>
         </div>
       </div>

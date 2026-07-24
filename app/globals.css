@@ -1,34 +1,151 @@
+@import url('https://fonts.googleapis.com/css2?family=Geist:wght@300;400;500;600&family=Geist+Mono:wght@400;500&display=swap');
+
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
 
 @layer base {
-  :root {
-    --brand-600: #1F4E79;
-  }
   html, body { height: 100%; }
   body {
-    @apply bg-slate-50 text-slate-900 antialiased;
-    font-family: Inter, system-ui, -apple-system, sans-serif;
+    color: #0F172A;
+    font-family: 'Geist', ui-sans-serif, system-ui, sans-serif;
+    font-feature-settings: 'ss01', 'cv11';
+    -webkit-font-smoothing: antialiased;
+    letter-spacing: -0.011em;
+    background-color: #F5F7FA;
+    background-image:
+      radial-gradient(at 12% 18%, rgba(79, 70, 229, 0.14) 0px, transparent 55%),
+      radial-gradient(at 88% 8%, rgba(124, 58, 237, 0.12) 0px, transparent 50%),
+      radial-gradient(at 78% 92%, rgba(59, 130, 246, 0.10) 0px, transparent 55%),
+      radial-gradient(at 8% 88%, rgba(16, 185, 129, 0.06) 0px, transparent 50%);
+    background-attachment: fixed;
   }
+  ::selection { background: rgba(79, 70, 229, 0.16); }
 }
 
 @layer components {
-  .card {
-    @apply bg-white border border-slate-200 rounded-lg shadow-sm;
+  /* Glass surfaces — the foundational pattern */
+  .glass {
+    background: rgba(255, 255, 255, 0.62);
+    backdrop-filter: blur(24px) saturate(180%);
+    -webkit-backdrop-filter: blur(24px) saturate(180%);
+    border: 1px solid rgba(255, 255, 255, 0.75);
+    box-shadow:
+      0 1px 0 0 rgba(255, 255, 255, 0.9) inset,
+      0 20px 40px -20px rgba(15, 23, 42, 0.12),
+      0 4px 12px -6px rgba(15, 23, 42, 0.06);
+    border-radius: 20px;
   }
+  .glass-sm {
+    background: rgba(255, 255, 255, 0.55);
+    backdrop-filter: blur(16px) saturate(180%);
+    -webkit-backdrop-filter: blur(16px) saturate(180%);
+    border: 1px solid rgba(255, 255, 255, 0.7);
+    box-shadow:
+      0 1px 0 0 rgba(255, 255, 255, 0.85) inset,
+      0 4px 12px -6px rgba(15, 23, 42, 0.06);
+    border-radius: 14px;
+  }
+  .glass-strong {
+    background: rgba(255, 255, 255, 0.78);
+    backdrop-filter: blur(28px) saturate(190%);
+    -webkit-backdrop-filter: blur(28px) saturate(190%);
+    border: 1px solid rgba(255, 255, 255, 0.85);
+    box-shadow:
+      0 1px 0 0 rgba(255, 255, 255, 0.95) inset,
+      0 32px 64px -24px rgba(79, 70, 229, 0.18),
+      0 8px 20px -8px rgba(15, 23, 42, 0.10);
+    border-radius: 20px;
+  }
+  .glass-dark {
+    background: rgba(15, 23, 42, 0.82);
+    backdrop-filter: blur(24px) saturate(180%);
+    -webkit-backdrop-filter: blur(24px) saturate(180%);
+    border: 1px solid rgba(255, 255, 255, 0.10);
+    box-shadow:
+      0 1px 0 0 rgba(255, 255, 255, 0.06) inset,
+      0 20px 40px -20px rgba(15, 23, 42, 0.4);
+    border-radius: 20px;
+    color: #F1F5F9;
+  }
+
+  /* Typography helpers */
+  .label {
+    font-family: 'Geist Mono', ui-monospace, monospace;
+    font-size: 10px;
+    font-weight: 500;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    color: #64748B;
+  }
+  .display {
+    font-weight: 300;
+    letter-spacing: -0.025em;
+    line-height: 1.05;
+  }
+
+  /* Buttons */
   .btn-primary {
-    @apply inline-flex items-center gap-2 bg-brand-600 hover:bg-brand-700 text-white font-medium px-4 py-2 rounded-md text-sm transition-colors disabled:opacity-50 disabled:cursor-not-allowed;
+    @apply inline-flex items-center gap-2 px-4 py-2 text-sm font-medium text-white transition-all;
+    background-image: linear-gradient(135deg, #4F46E5 0%, #7C3AED 100%);
+    border-radius: 12px;
+    box-shadow: 0 1px 0 0 rgba(255,255,255,0.25) inset, 0 8px 20px -8px rgba(79,70,229,0.5);
   }
+  .btn-primary:hover { filter: brightness(1.08); transform: translateY(-1px); }
+  .btn-primary:active { transform: translateY(0); filter: brightness(0.98); }
+  .btn-primary:disabled { opacity: 0.5; cursor: not-allowed; transform: none; }
+
   .btn-secondary {
-    @apply inline-flex items-center gap-2 bg-white hover:bg-slate-50 text-slate-700 border border-slate-300 font-medium px-4 py-2 rounded-md text-sm transition-colors;
+    @apply inline-flex items-center gap-2 px-4 py-2 text-sm font-medium transition-all;
+    color: #334155;
+    background: rgba(255, 255, 255, 0.7);
+    backdrop-filter: blur(12px);
+    border: 1px solid rgba(255, 255, 255, 0.85);
+    border-radius: 12px;
+    box-shadow: 0 1px 0 0 rgba(255,255,255,0.9) inset, 0 2px 8px -2px rgba(15,23,42,0.06);
   }
+  .btn-secondary:hover { background: rgba(255, 255, 255, 0.9); }
+
+  /* Badges — soft, semi-transparent, uniform */
   .badge {
-    @apply inline-flex items-center px-2 py-0.5 rounded text-xs font-medium;
+    @apply inline-flex items-center gap-1 px-2 py-0.5 text-[10px] font-mono font-medium tracking-wider uppercase;
+    border-radius: 999px;
+    backdrop-filter: blur(8px);
   }
-  .badge-critical { @apply bg-red-100 text-red-800; }
-  .badge-major    { @apply bg-amber-100 text-amber-800; }
-  .badge-minor    { @apply bg-blue-100 text-blue-800; }
-  .badge-approved { @apply bg-emerald-100 text-emerald-800; }
-  .badge-pending  { @apply bg-slate-100 text-slate-700; }
+  .badge-neutral  { background: rgba(148, 163, 184, 0.15); color: #475569; border: 1px solid rgba(148, 163, 184, 0.25); }
+  .badge-live     { background: rgba(16, 185, 129, 0.12);  color: #047857; border: 1px solid rgba(16, 185, 129, 0.25); }
+  .badge-pending  { background: rgba(148, 163, 184, 0.12); color: #475569; border: 1px solid rgba(148, 163, 184, 0.22); }
+  .badge-critical { background: rgba(239, 68, 68, 0.12);   color: #B91C1C; border: 1px solid rgba(239, 68, 68, 0.28); }
+  .badge-major    { background: rgba(245, 158, 11, 0.14);  color: #92400E; border: 1px solid rgba(245, 158, 11, 0.28); }
+  .badge-minor    { background: rgba(79, 70, 229, 0.10);   color: #4338CA; border: 1px solid rgba(79, 70, 229, 0.22); }
+  .badge-approved { background: rgba(16, 185, 129, 0.14);  color: #047857; border: 1px solid rgba(16, 185, 129, 0.28); }
+
+  /* Accent gradient text */
+  .text-accent {
+    background-image: linear-gradient(135deg, #4F46E5 0%, #7C3AED 100%);
+    -webkit-background-clip: text;
+    background-clip: text;
+    color: transparent;
+  }
+
+  /* Inputs */
+  .input {
+    @apply w-full px-3 py-2 text-sm transition-all;
+    background: rgba(255, 255, 255, 0.6);
+    border: 1px solid rgba(148, 163, 184, 0.25);
+    border-radius: 10px;
+    color: #0F172A;
+  }
+  .input:focus {
+    outline: none;
+    border-color: rgba(79, 70, 229, 0.5);
+    background: rgba(255, 255, 255, 0.85);
+    box-shadow: 0 0 0 4px rgba(79, 70, 229, 0.10);
+  }
 }
+
+/* Scrollbar polish */
+::-webkit-scrollbar { width: 10px; height: 10px; }
+::-webkit-scrollbar-track { background: transparent; }
+::-webkit-scrollbar-thumb { background: rgba(148, 163, 184, 0.25); border-radius: 999px; border: 2px solid transparent; background-clip: content-box; }
+::-webkit-scrollbar-thumb:hover { background: rgba(148, 163, 184, 0.45); background-clip: content-box; }

@@ -1,10 +1,11 @@
 "use client";
 import { useEffect, useState } from "react";
-import { Sparkles, CheckCircle2, XCircle, AlertTriangle, Info } from "lucide-react";
+import { Sparkles, CheckCircle2, XCircle, Info } from "lucide-react";
 
 interface Deviation {
   id: string; severity: "CRITICAL" | "MAJOR" | "MINOR"; sopClauseId: string;
-  expectedValue: string; actualValue: string; justification: string; status: string; reviewerNote?: string | null;
+  expectedValue: string; actualValue: string; justification: string;
+  status: string; reviewerNote?: string | null;
 }
 interface AppDetail {
   id: string; applicantName: string; productType: string; status: string;
@@ -46,91 +47,99 @@ export default function ApplicationDetail({ id, onChange }: { id: string; onChan
     if ((await r.json()).success) { load(); onChange(); }
   }
 
-  if (loading || !app) return <div className="card p-8 text-center text-sm text-slate-500">Loading…</div>;
+  if (loading || !app) return <div className="glass p-10 text-center text-[13px] text-ink-500">Loading…</div>;
 
   const sevBadge = (s: string) =>
     s === "CRITICAL" ? "badge badge-critical" :
-    s === "MAJOR"    ? "badge badge-major" :
+    s === "MAJOR"    ? "badge badge-major"    :
                        "badge badge-minor";
 
   return (
     <div className="space-y-4">
-      <div className="card p-5">
+      <div className="glass p-6">
         <div className="flex items-start justify-between gap-4">
           <div>
-            <div className="text-xs text-slate-500">Applicant</div>
-            <div className="text-lg font-semibold text-slate-900">{app.applicantName}</div>
-            <div className="text-xs text-slate-500 mt-1">{app.productType.replace("_", " ")} • Status: {app.status}</div>
+            <div className="label mb-2">Applicant</div>
+            <div className="display text-2xl text-ink-900">{app.applicantName}</div>
+            <div className="mt-2 flex items-center gap-2">
+              <span className="text-[12px] font-mono uppercase tracking-wider text-ink-500">{app.productType.replace("_", " ")}</span>
+              <span className="text-ink-300">·</span>
+              <span className="text-[12px] font-mono uppercase tracking-wider text-ink-500">{app.status}</span>
+            </div>
           </div>
           <button onClick={analyze} disabled={analyzing} className="btn-primary">
-            <Sparkles className="w-4 h-4" />
-            {analyzing ? "Analyzing with Claude…" : "Analyze for Deviations"}
+            <Sparkles className="w-4 h-4" strokeWidth={1.75}/>
+            {analyzing ? "Analyzing…" : "Analyze"}
           </button>
         </div>
         {error && (
-          <div className="mt-3 text-sm text-red-700 bg-red-50 border border-red-200 rounded p-2 flex gap-2">
-            <Info className="w-4 h-4 shrink-0 mt-0.5" /> {error}
+          <div className="mt-4 flex gap-2 text-[13px] px-3 py-2 rounded-xl"
+               style={{ background: 'rgba(239, 68, 68, 0.08)', border: '1px solid rgba(239, 68, 68, 0.2)', color: '#B91C1C' }}>
+            <Info className="w-4 h-4 shrink-0 mt-0.5" strokeWidth={1.75}/> {error}
           </div>
         )}
       </div>
 
-      <div className="card p-5">
-        <h4 className="font-semibold text-sm text-slate-700 mb-2">Extracted Applicant Data</h4>
-        <pre className="text-xs bg-slate-50 border border-slate-200 rounded p-3 overflow-x-auto">
+      <div className="glass p-6">
+        <div className="label mb-3">Extracted applicant data</div>
+        <pre className="text-[11px] font-mono leading-relaxed p-4 rounded-xl overflow-x-auto"
+             style={{ background: 'rgba(15, 23, 42, 0.04)', border: '1px solid rgba(15, 23, 42, 0.05)', color: '#334155' }}>
 {JSON.stringify(app.extractedData, null, 2)}
         </pre>
       </div>
 
-      <div className="card">
-        <div className="px-5 py-3 border-b border-slate-200 flex items-center justify-between">
-          <h4 className="font-semibold text-sm text-slate-700">Deviations</h4>
-          <span className="text-xs text-slate-500">
-            {app.deviations.length === 0 ? "None yet — click Analyze" : `${app.deviations.length} found`}
-          </span>
+      <div className="glass">
+        <div className="px-6 py-4 flex items-center justify-between" style={{ borderBottom: '1px solid rgba(255,255,255,0.5)' }}>
+          <div className="label">Deviations</div>
+          <div className="text-[12px] font-mono text-ink-500">
+            {app.deviations.length === 0 ? "None yet" : `${app.deviations.length} found`}
+          </div>
         </div>
         {app.deviations.length === 0 ? (
-          <div className="p-10 text-center">
-            <CheckCircle2 className="w-8 h-8 mx-auto text-slate-300 mb-2" />
-            <div className="text-sm text-slate-500">
-              {app.status === "REVIEW" ? "No deviations — applicant meets all SOP criteria" : "Run analysis to identify deviations"}
+          <div className="p-12 text-center">
+            <CheckCircle2 className="w-8 h-8 mx-auto text-ink-300 mb-3" strokeWidth={1.25}/>
+            <div className="text-[13px] text-ink-500">
+              {app.status === "REVIEW" ? "No deviations — applicant meets all SOP criteria" : "Run analyze to identify deviations"}
             </div>
           </div>
         ) : (
-          <ul className="divide-y divide-slate-100">
+          <ul className="divide-y" style={{ borderColor: 'rgba(148,163,184,0.15)' }}>
             {app.deviations.map((d) => (
-              <li key={d.id} className="p-4">
+              <li key={d.id} className="p-5">
                 <div className="flex items-start justify-between gap-3">
                   <div className="min-w-0 flex-1">
                     <div className="flex items-center gap-2 flex-wrap">
                       <span className={sevBadge(d.severity)}>{d.severity}</span>
-                      <span className="text-xs font-mono text-slate-500">{d.sopClauseId}</span>
+                      <span className="text-[11px] font-mono text-ink-500">{d.sopClauseId}</span>
                       {d.status !== "OPEN" && (
                         <span className={`badge ${d.status === "APPROVED_OVERRIDE" ? "badge-approved" : "badge-critical"}`}>
                           {d.status.replace("_", " ")}
                         </span>
                       )}
                     </div>
-                    <p className="text-sm text-slate-800 mt-2">{d.justification}</p>
-                    <div className="grid grid-cols-2 gap-3 mt-2 text-xs">
+                    <p className="text-[13px] text-ink-900 mt-3 leading-relaxed">{d.justification}</p>
+                    <div className="grid grid-cols-2 gap-3 mt-4">
                       <div>
-                        <div className="text-slate-500">Expected</div>
-                        <div className="text-slate-800 font-mono">{d.expectedValue}</div>
+                        <div className="label mb-1">Expected</div>
+                        <div className="text-[12px] font-mono text-ink-700">{d.expectedValue}</div>
                       </div>
                       <div>
-                        <div className="text-slate-500">Actual</div>
-                        <div className="text-slate-800 font-mono">{d.actualValue}</div>
+                        <div className="label mb-1">Actual</div>
+                        <div className="text-[12px] font-mono text-ink-700">{d.actualValue}</div>
                       </div>
                     </div>
                   </div>
                   {d.status === "OPEN" && (
                     <div className="flex flex-col gap-1.5 shrink-0">
                       <button onClick={() => decide(d.id, "APPROVED_OVERRIDE")}
-                              className="text-xs px-3 py-1.5 rounded-md bg-emerald-50 text-emerald-700 hover:bg-emerald-100 flex items-center gap-1">
-                        <CheckCircle2 className="w-3 h-3" /> Override
+                              className="text-[11px] font-mono uppercase tracking-wider px-3 py-1.5 rounded-lg flex items-center gap-1 transition-colors"
+                              style={{ background: 'rgba(16, 185, 129, 0.10)', color: '#047857', border: '1px solid rgba(16, 185, 129, 0.2)' }}>
+                        <CheckCircle2 className="w-3 h-3" strokeWidth={1.75}/> Override
                       </button>
                       <button onClick={() => decide(d.id, "REJECTED")}
-                              className="text-xs px-3 py-1.5 rounded-md bg-red-50 text-red-700 hover:bg-red-100 flex items-center gap-1">
-                        <XCircle className="w-3 h-3" /> Reject
+                              className="text-[11px] font-mono uppercase tracking-wider px-3 py-1.5 rounded-lg flex items-center gap-1 transition-colors"
+                              style={{ background: 'rgba(239, 68, 68, 0.08)', color: '#B91C1C', border: '1px solid rgba(239, 68, 68, 0.2)' }}>
+                        <XCircle className="w-3 h-3" strokeWidth={1.75}/> Reject
                       </button>
                     </div>
                   )}
