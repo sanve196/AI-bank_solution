@@ -16,11 +16,11 @@ const modules = [
   { code: "08", title: "Incident Investigation", desc: "Log correlation, timeline reconstruction, RCA support.", icon: Siren, href: "/uc-08-incident", status: "planned" },
   { code: "09", title: "Regulatory Companion", desc: "Regulation summarisation and impact assessment.", icon: Scale, href: "/uc-09-regulatory", status: "live" },
   { code: "10", title: "Compliance Planning", desc: "Change action planning and deadline tracking.", icon: ClipboardCheck, href: "/uc-10-compliance-planning", status: "planned" },
-  { code: "11", title: "Case Reporting", desc: "Auto-generated STR/SAR narratives from alerts and data.", icon: FileText, href: "/uc-11-case-reporting", status: "planned" },
+  { code: "11", title: "Case Reporting", desc: "Auto-generated STR/SAR narratives from alerts and data.", icon: FileText, href: "/uc-11-case-reporting", status: "live" },
 ];
 
 const stats = [
-  { label: "Modules live", value: "4", suffix: "/ 11" },
+  { label: "Modules live", value: "5", suffix: "/ 11" },
   { label: "AI calls today", value: "—", suffix: "" },
   { label: "Open cases", value: "0", suffix: "" },
   { label: "Avg. turnaround", value: "—", suffix: "" },
@@ -53,7 +53,7 @@ export default function DashboardPage() {
           <div className="label mb-2">Use cases</div>
           <h2 className="display text-2xl text-ink-900">Modules</h2>
         </div>
-        <div className="text-[12px] font-mono text-ink-500">11 total · 4 live</div>
+        <div className="text-[12px] font-mono text-ink-500">11 total · 5 live</div>
       </div>
 
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
