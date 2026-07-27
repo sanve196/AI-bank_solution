@@ -14,13 +14,13 @@ const modules = [
   { code: "06", title: "Process Analytics & TAT", desc: "Conversational analytics for managers on process velocity.", icon: Timer, href: "/uc-06-process-analytics", status: "planned" },
   { code: "07", title: "Branch Operations", desc: "Branch benchmarking and training-need identification.", icon: Building2, href: "/uc-07-branch-analytics", status: "planned" },
   { code: "08", title: "Incident Investigation", desc: "Log correlation, timeline reconstruction, RCA support.", icon: Siren, href: "/uc-08-incident", status: "planned" },
-  { code: "09", title: "Regulatory Companion", desc: "Regulation summarisation and impact assessment.", icon: Scale, href: "/uc-09-regulatory", status: "planned" },
+  { code: "09", title: "Regulatory Companion", desc: "Regulation summarisation and impact assessment.", icon: Scale, href: "/uc-09-regulatory", status: "live" },
   { code: "10", title: "Compliance Planning", desc: "Change action planning and deadline tracking.", icon: ClipboardCheck, href: "/uc-10-compliance-planning", status: "planned" },
   { code: "11", title: "Case Reporting", desc: "Auto-generated STR/SAR narratives from alerts and data.", icon: FileText, href: "/uc-11-case-reporting", status: "planned" },
 ];
 
 const stats = [
-  { label: "Modules live", value: "2", suffix: "/ 11" },
+  { label: "Modules live", value: "3", suffix: "/ 11" },
   { label: "AI calls today", value: "—", suffix: "" },
   { label: "Open cases", value: "0", suffix: "" },
   { label: "Avg. turnaround", value: "—", suffix: "" },
@@ -53,7 +53,7 @@ export default function DashboardPage() {
           <div className="label mb-2">Use cases</div>
           <h2 className="display text-2xl text-ink-900">Modules</h2>
         </div>
-        <div className="text-[12px] font-mono text-ink-500">11 total · 2 live</div>
+        <div className="text-[12px] font-mono text-ink-500">11 total · 3 live</div>
       </div>
 
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
