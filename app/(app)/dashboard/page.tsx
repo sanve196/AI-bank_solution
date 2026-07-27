@@ -9,7 +9,7 @@ const modules = [
   { code: "01", title: "SOP Deviation Identification", desc: "Auto-compare applicant data against SOPs and flag deviations.", icon: FileSearch, href: "/uc-01-sop-deviation", status: "live" },
   { code: "02", title: "Anomaly Detection", desc: "Cross-source fraud and misrepresentation pattern detection.", icon: ShieldAlert, href: "/uc-02-anomaly", status: "planned" },
   { code: "03", title: "Decisioning", desc: "Route flagged cases to the right approver with AI justification.", icon: GitBranch, href: "/uc-03-decisioning", status: "planned" },
-  { code: "04", title: "Customer Onboarding", desc: "KYC verification, deviation handling, and account creation.", icon: UserPlus, href: "/uc-04-onboarding", status: "planned" },
+  { code: "04", title: "Customer Onboarding", desc: "KYC verification, deviation handling, and account creation.", icon: UserPlus, href: "/uc-04-onboarding", status: "live" },
   { code: "05", title: "Field Visit Analyser", desc: "Multi-modal analysis of SME field visits.", icon: MapPin, href: "/uc-05-field-visit", status: "planned" },
   { code: "06", title: "Process Analytics & TAT", desc: "Conversational analytics for managers on process velocity.", icon: Timer, href: "/uc-06-process-analytics", status: "planned" },
   { code: "07", title: "Branch Operations", desc: "Branch benchmarking and training-need identification.", icon: Building2, href: "/uc-07-branch-analytics", status: "planned" },
@@ -20,7 +20,7 @@ const modules = [
 ];
 
 const stats = [
-  { label: "Modules live", value: "1", suffix: "/ 11" },
+  { label: "Modules live", value: "2", suffix: "/ 11" },
   { label: "AI calls today", value: "—", suffix: "" },
   { label: "Open cases", value: "0", suffix: "" },
   { label: "Avg. turnaround", value: "—", suffix: "" },
@@ -53,7 +53,7 @@ export default function DashboardPage() {
           <div className="label mb-2">Use cases</div>
           <h2 className="display text-2xl text-ink-900">Modules</h2>
         </div>
-        <div className="text-[12px] font-mono text-ink-500">11 total · 1 live</div>
+        <div className="text-[12px] font-mono text-ink-500">11 total · 2 live</div>
       </div>
 
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
